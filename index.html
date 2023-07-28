@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kolay İngilizce Öğren</title>
+  <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="footer.css">
+</head>
+<body>
+  <div class="container">
+    <div class="question-container" id="questionContainer">
+    </div>
+    <button class="history-btn" onclick="toggleHistory()">Geçmiş</button>
+    <div class="history-container" id="historyContainer"></div>
+    <div class="win-rate-container" id="winRateContainer"></div>
+  </div>
+
+  <script>
+const questions = [
+      {
+        question: "Ev ne demek?",
+        options: [
+          { value: "a", text: "a) House" },
+          { value: "b", text: "b) Tree" },
+          { value: "c", text: "c) Car" }
+        ],
+        correctAnswer: "a"
+      },
+      {
+        question: "Kitap ne demek?",
+        options: [
+          { value: "a", text: "a) Table" },
+          { value: "b", text: "b) Book" },
+          { value: "c", text: "c) Chair" }
+        ],
+        correctAnswer: "b"
+      },
+      {
+        question: "Bilgisayar ne demek?",
+        options: [
+          { value: "a", text: "a) Phone" },
+          { value: "b", text: "b) Computer" },
+          { value: "c", text: "c) Dog" }
+        ],
+        correctAnswer: "b"
+      },
+      {
+        question: "Araba ne demek?",
+        options: [
+          { value: "a", text: "a) Bike" },
+          { value: "b", text: "b) Car" },
+          { value: "c", text: "c) Train" }
+        ],
+        correctAnswer: "b"
+      },
+      {
+        question: "Uçak ne demek?",
+        options: [
+          { value: "a", text: "a) Boat" },
+          { value: "b", text: "b) Plane" },
+          { value: "c", text: "c) Bus" }
+        ],
+        correctAnswer: "b"
+      },
+      {
+        question: "Kalem ne demek?",
+        options: [
+          { value: "a", text: "a) Pen" },
+          { value: "b", text: "b) Pencil" },
+          { value: "c", text: "c) Eraser" }
+        ],
+        correctAnswer: "a"
+      },
+      {
+        question: "Ayakkabı ne demek?",
+        options: [
+          { value: "a", text: "a) Shoe" },
+          { value: "b", text: "b) Shirt" },
+          { value: "c", text: "c) Hat" }
+        ],
+        correctAnswer: "a"
+      },
+      {
+        question: "Masa ne demek?",
+        options: [
+          { value: "a", text: "a) Table" },
+          { value: "b", text: "b) Chair" },
+          { value: "c", text: "c) Bed" }
+        ],
+        correctAnswer: "a"
+      },
+      {
+        question: "Televizyon ne demek?",
+        options: [
+          { value: "a", text: "a) Phone" },
+          { value: "b", text: "b) Television" },
+          { value: "c", text: "c) Radio" }
+        ],
+        correctAnswer: "b"
+      },
+      {
+        question: "Elma ne demek?",
+        options: [
+          { value: "a", text: "a) Banana" },
+          { value: "b", text: "b) Orange" },
+          { value: "c", text: "c) Apple" }
+        ],
+        correctAnswer: "c"
+      },
+    ];
+
+    let currentQuestionIndex = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    const history = [];
+
+    function showQuestion(index) {
+      const questionContainer = document.getElementById('questionContainer');
+      const currentQuestion = questions[index];
+      let optionsHtml = '';
+      currentQuestion.options.forEach(option => {
+        optionsHtml += `
+          <li class="option">
+            <input type="radio" name="question" value="${option.value}" id="option${option.value}${index}">
+            <label for="option${option.value}${index}">${option.text}</label>
+          </li>`;
+      });
+
+      questionContainer.innerHTML = `
+        <div class="question">Soru ${index + 1}: ${currentQuestion.question}</div>
+        <ul class="options">${optionsHtml}</ul>
+        <button class="submit-btn" onclick="checkAnswer(${index})">Cevabı Gönder</button>
+      `;
+    }
+
+    function checkAnswer(index) {
+      const selectedOption = document.querySelector('input[name="question"]:checked');
+      if (selectedOption) {
+        const answer = selectedOption.value;
+        const currentQuestion = questions[index];
+        if (answer === currentQuestion.correctAnswer) {
+          alert('Doğru cevap!');
+          correctCount++;
+        } else {
+          alert(`Yanlış cevap! Doğru cevap: ${currentQuestion.correctAnswer}`);
+          wrongCount++;
+        }
+
+        history.push({ question: currentQuestion.question, answer, correct: answer === currentQuestion.correctAnswer });
+
+        if (index < questions.length - 1) {
+          currentQuestionIndex++;
+          showQuestion(currentQuestionIndex);
+        } else {
+          alert('Tebrikler! Tüm soruları doğru cevapladınız.');
+        }
+      } else {
+        alert('Lütfen bir seçenek seçin!');
+      }
+    }
+
+    function toggleHistory() {
+      const historyContainer = document.getElementById('historyContainer');
+      historyContainer.innerHTML = '';
+      if (historyContainer.style.display === 'block') {
+        historyContainer.style.display = 'none';
+      } else {
+        showHistory();
+        historyContainer.style.display = 'block';
+      }
+    }
+
+    function showHistory() {
+      const historyContainer = document.getElementById('historyContainer');
+      let historyHtml = '';
+      history.forEach((item, index) => {
+        historyHtml += `
+          <div class="history-item">
+            Soru ${index + 1}: ${item.question} - Cevap: ${item.answer} - Doğru mu: ${item.correct ? 'Evet' : 'Hayır'}
+          </div>`;
+      });
+
+      if (history.length === 0) {
+        historyHtml = 'Henüz geçmiş kaydı bulunmamaktadır.';
+      }
+
+      historyContainer.innerHTML = historyHtml;
+      calculateWinRate();
+    }
+
+    function calculateWinRate() {
+      const totalQuestions = correctCount + wrongCount;
+      const winRate = (correctCount / totalQuestions) * 100;
+      const winRateContainer = document.getElementById('winRateContainer');
+      winRateContainer.innerHTML = `Oran: ${winRate.toFixed(2)}%`;
+
+      let color = '';
+      if (winRate >= 75) {
+        color = 'green';
+      } else if (winRate >= 50) {
+        color = 'orange';
+      } else {
+        color = 'red';
+      }
+
+      winRateContainer.style.color = color;
+    }
+
+    // Başlangıçta 2. soruyu gösteriyoruz
+    showQuestion(currentQuestionIndex);
+  </script>
+<footer id="transparentFooter">
+    <p class="footerText">
+ <link rel="stylesheet" href="footer.css">
+      Made by <a href="https://github.com/QuarkDevelopmentt" id="link1">Quark Development</a> with &lt;3. Open-source on <a href="https://github.com/Stormysx/reflex-game" id="link2">GitHub</a>.
+    </p>
+  </footer>
+
+  <script src="footer.js"></script>
+</body>
+</html>
